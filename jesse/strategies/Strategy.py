@@ -12,6 +12,7 @@ from jesse.enums import sides, order_submitted_via, order_types
 from jesse.models import ClosedTrade, Order, Route, FuturesExchange, SpotExchange, Position
 from jesse.services import metrics
 from jesse.services.broker import Broker
+from jesse.services.env import ENV_VALUES
 from jesse.store import store
 from jesse.services.cache import cached
 from jesse.services import notifier
@@ -1193,6 +1194,8 @@ class Strategy(ABC):
     @staticmethod
     def log(msg: str, log_type: str = 'info', send_notification: bool = False) -> None:
         msg = str(msg)
+        if ENV_VALUES.get("PRINT_LOG", "False").lower() in ("true", "1"):
+            print(msg)
 
         if log_type == 'info':
             logger.info(msg, send_notification=jh.is_live() and send_notification)
