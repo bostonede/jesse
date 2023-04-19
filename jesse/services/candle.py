@@ -1,8 +1,19 @@
+from enum import Enum
+
 import arrow
 import numpy as np
 
 import jesse.helpers as jh
 from jesse.services import logger
+
+
+class DefaultIndex(Enum):
+    timestamp = 0
+    open = 1
+    close = 2
+    high = 3
+    low = 4
+    volume = 5
 
 
 def generate_candle_from_one_minutes(
