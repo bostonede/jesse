@@ -50,6 +50,7 @@ class Strategy(ABC):
         self.take_profit = None
         self._take_profit = None
 
+        self.disable_trade = False
         self.trade: ClosedTrade = None
         self.trades_count = 0
 
