@@ -52,9 +52,17 @@ def store_logs(export_json: bool = False, export_tradingview: bool = False, expo
             for i, t in enumerate(trades_json['trades']):
                 if i == 0:
                     # header of CSV file
-                    wr.writerow(t.keys())
+                    keys = list(t.keys()) + ["opened_at_datetime", "closed_at_datetime"]
+                    wr.writerow(keys)
 
-                wr.writerow(t.values())
+                values = list(t.values())
+                opened_at = values[-2]
+                closed_at = values[-1]
+                opened_at_datetime = jh.timestamp_to_time(opened_at)
+                closed_at_datetime = jh.timestamp_to_time(closed_at)
+                values_with_datetime = values + [opened_at_datetime, closed_at_datetime]
+                
+                wr.writerow(values_with_datetime)
 
             result['csv'] = path
 
