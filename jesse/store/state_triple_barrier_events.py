@@ -1,4 +1,4 @@
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass, asdict, field
 from collections import deque
 
 from jesse.enums import trade_types
@@ -15,7 +15,7 @@ class TripleBarrierEvent:
     expiration_limit_time: float = None
     label: int = None
     executed_at: float = None
-    note: str = None
+    note: dict = field(default_factory=dict)
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -45,8 +45,8 @@ class TripleBarrierEventsState:
             "profit_take_count": self.profit_take_count,
             "stop_loss_count": self.stop_loss_count,
             "no_sign_count": self.no_sign_count,            
-            "profit_take_ratio": self.profit_take_count / total_executed,
-            "stop_loss_ratio": self.stop_loss_count / total_executed,
-            "no_sign_ratio": self.no_sign_count / total_executed,
+            "profit_take_ratio": self.profit_take_count / total_executed if total_executed != 0 else 0,
+            "stop_loss_ratio": self.stop_loss_count / total_executed if total_executed != 0 else 0,
+            "no_sign_ratio": self.no_sign_count / total_executed if total_executed != 0 else 0,
             
         }

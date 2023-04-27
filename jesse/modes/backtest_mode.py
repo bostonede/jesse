@@ -483,7 +483,7 @@ def _simulate_price_change_effect_for_triple_barrier_method(
         # expired, touch vertical barrier
         if candle_timestamp >= event.expiration_limit_time:
             event.label = 0
-            event.note = "expired"
+            event.note["comment"] = "expired"
             store.triple_barrier_events.no_sign_count += 1
             store.triple_barrier_events.executed.append(event)
             continue
@@ -500,7 +500,7 @@ def _simulate_price_change_effect_for_triple_barrier_method(
                 # If two horizontal barriers are touched at the same time on a 1m candle, consider label to be 0.
                 event.label = 0
                 store.triple_barrier_events.no_sign_count += 1
-                event.note = f"hit both. {current_temp_candle}"
+                event.note["comment"] = f"hit both. {current_temp_candle}"
                 event.executed_at = candle_timestamp
             elif profit_take_executed:
                 event.label = 1
