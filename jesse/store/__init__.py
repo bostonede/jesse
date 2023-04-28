@@ -12,6 +12,7 @@ from .state_orders import OrdersState
 from .state_positions import PositionsState
 from .state_tickers import TickersState
 from .state_trades import TradesState
+from .state_triple_barrier_events import TripleBarrierEventsState
 
 
 def install_routes() -> None:
@@ -91,6 +92,7 @@ class StoreClass:
     tickers = TickersState()
     trades = TradesState()
     orderbooks = OrderbookState()
+    triple_barrier_events = TripleBarrierEventsState()
 
     def __init__(self) -> None:
         self.vars = {}
@@ -98,7 +100,7 @@ class StoreClass:
     def reset(self, force_install_routes: bool = False) -> None:
         """
         Resets all the states within the store
-        
+
         Keyword Arguments:
             force_install_routes {bool} -- used for unit_testing (default: {False})
         """
@@ -115,6 +117,7 @@ class StoreClass:
         self.tickers = TickersState()
         self.trades = TradesState()
         self.orderbooks = OrderbookState()
+        self.triple_barrier_events = TripleBarrierEventsState()
 
 
 # if not jh.is_unit_testing():
