@@ -48,5 +48,4 @@ class TripleBarrierEventsState:
             "profit_take_ratio": self.profit_take_count / total_executed if total_executed != 0 else 0,
             "stop_loss_ratio": self.stop_loss_count / total_executed if total_executed != 0 else 0,
             "no_sign_ratio": self.no_sign_count / total_executed if total_executed != 0 else 0,
-            
         }
