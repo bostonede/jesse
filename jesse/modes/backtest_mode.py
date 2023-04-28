@@ -43,7 +43,8 @@ def run(
         tradingview: bool = False,
         full_reports: bool = False,
         csv: bool = False,
-        json: bool = False
+        json: bool = False,
+        triple_barrier_method: bool = False,
 ) -> None:
     if not jh.is_unit_testing():
         # at every second, we check to see if it's time to execute stuff
@@ -102,7 +103,8 @@ def run(
         generate_csv=csv,
         generate_json=json,
         generate_equity_curve=True,
-        generate_hyperparameters=True
+        generate_hyperparameters=True,
+        triple_barrier_method=triple_barrier_method,
     )
 
     if not jh.should_execute_silently():
