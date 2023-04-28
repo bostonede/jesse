@@ -1,6 +1,7 @@
 from dataclasses import dataclass, asdict, field
 from collections import deque
 
+import jesse.helpers as jh
 from jesse.enums import trade_types
 
 
