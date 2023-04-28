@@ -234,6 +234,7 @@ def simulator(
         generate_json: bool = False,
         generate_equity_curve: bool = False,
         generate_hyperparameters: bool = False,
+        triple_barrier_method: bool = False,
 ) -> dict:
     result = {}
     begin_time_track = time.time()
@@ -311,6 +312,8 @@ def simulator(
                 print_candle(short_candle, True, symbol)
 
             _simulate_price_change_effect(short_candle, exchange, symbol)
+            if triple_barrier_method:
+                _simulate_price_change_effect_for_triple_barrier_method(short_candle)
 
             # generate and add candles for bigger timeframes
             for timeframe in config['app']['considering_timeframes']:
@@ -456,6 +459,60 @@ def _simulate_price_change_effect(real_candle: np.ndarray, exchange: str, symbol
             break
 
     _check_for_liquidations(real_candle, exchange, symbol)
+
+
+def _simulate_price_change_effect_for_triple_barrier_method(
+    real_candle: np.ndarray,
+) -> None:
+    """
+    Simulate triple barrirer method.
+    Check which barrier was touched first using "1m" candles.
+    """
+    events_to_execute = store.triple_barrier_events.to_execute
+    length = len(events_to_execute)
+
+    current_temp_candle = real_candle.copy()
+
+    # check events
+    for i in range(length):
+        profit_take_executed = False
+        stop_loss_executed = False
+        candle_timestamp = real_candle[0]
+        event = events_to_execute.popleft()
+
+        # expired, touch vertical barrier
+        if candle_timestamp >= event.expiration_limit_time:
+            event.label = 0
+            event.note = "expired"
+            store.triple_barrier_events.no_sign_count += 1
+            store.triple_barrier_events.executed.append(event)
+            continue
+
+        # excuted
+        if candle_includes_price(current_temp_candle, event.profit_take_price):
+            profit_take_executed = True
+
+        if candle_includes_price(current_temp_candle, event.stop_loss_price):
+            stop_loss_executed = True
+
+        if profit_take_executed or stop_loss_executed:
+            if profit_take_executed and stop_loss_executed:
+                # If two horizontal barriers are touched at the same time on a 1m candle, consider label to be 0.
+                event.label = 0
+                store.triple_barrier_events.no_sign_count += 1
+                event.note = f"hit both. {current_temp_candle}"
+                event.executed_at = candle_timestamp
+            elif profit_take_executed:
+                event.label = 1
+                store.triple_barrier_events.profit_take_count += 1
+                event.executed_at = candle_timestamp
+            elif stop_loss_executed:
+                event.label = -1
+                store.triple_barrier_events.stop_loss_count += 1
+                event.executed_at = candle_timestamp
+            store.triple_barrier_events.executed.append(event)
+        else:
+            events_to_execute.append(event)
 
 
 def _check_for_liquidations(candle: np.ndarray, exchange: str, symbol: str) -> None:
