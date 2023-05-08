@@ -87,3 +87,9 @@ class migration_actions:
 class order_submitted_via:
     STOP_LOSS = 'stop-loss'
     TAKE_PROFIT = 'take-profit'
+
+
+class round_types:
+    ROUND = "round"
+    CEIL = "ceil"
+    FLOOR = "floor"
