@@ -227,6 +227,11 @@ def floor_with_precision(num: float, precision: int = 0) -> float:
     return math.floor(num * temp) / temp
 
 
+def ceil_with_precision(num: float, precision: int = 0) -> float:
+    temp = 10 ** precision
+    return math.ceil(num * temp) / temp
+
+
 def format_currency(num: float) -> str:
     return f'{num:,}'
 
