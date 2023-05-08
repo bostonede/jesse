@@ -9,8 +9,8 @@ from jesse.enums import trade_types
 class TripleBarrierEvent:
     signal_timestamp: float = None
     side: trade_types = None
-    profit_take_rate: float = None
-    profit_take_price: float = None
+    profit_taking_rate: float = None
+    profit_taking_price: float = None
     stop_loss_rate: float = None
     stop_loss_price: float = None
     expiration_limit_time: float = None
@@ -34,7 +34,7 @@ class TripleBarrierEventsState:
         self.to_execute: deque[TripleBarrierEvent] = deque()
         self.executed: deque[TripleBarrierEvent] = deque()
 
-        self.profit_take_count = 0
+        self.profit_taking_count = 0
         self.stop_loss_count = 0
         self.no_sign_count = 0
 
@@ -43,10 +43,10 @@ class TripleBarrierEventsState:
 
         return {
             "total_executed": total_executed,
-            "profit_take_count": self.profit_take_count,
+            "profit_taking_count": self.profit_taking_count,
             "stop_loss_count": self.stop_loss_count,
             "no_sign_count": self.no_sign_count,            
-            "profit_take_ratio": self.profit_take_count / total_executed if total_executed != 0 else 0,
+            "profit_taking_ratio": self.profit_taking_count / total_executed if total_executed != 0 else 0,
             "stop_loss_ratio": self.stop_loss_count / total_executed if total_executed != 0 else 0,
             "no_sign_ratio": self.no_sign_count / total_executed if total_executed != 0 else 0,
         }

@@ -477,7 +477,7 @@ def _simulate_price_change_effect_for_triple_barrier_method(
 
     # check events
     for i in range(length):
-        profit_take_executed = False
+        profit_taking_executed = False
         stop_loss_executed = False
         candle_timestamp = real_candle[0]
         event = events_to_execute.popleft()
@@ -491,22 +491,22 @@ def _simulate_price_change_effect_for_triple_barrier_method(
             continue
 
         # excuted
-        if candle_includes_price(current_temp_candle, event.profit_take_price):
-            profit_take_executed = True
+        if candle_includes_price(current_temp_candle, event.profit_taking_price):
+            profit_taking_executed = True
 
         if candle_includes_price(current_temp_candle, event.stop_loss_price):
             stop_loss_executed = True
 
-        if profit_take_executed or stop_loss_executed:
-            if profit_take_executed and stop_loss_executed:
+        if profit_taking_executed or stop_loss_executed:
+            if profit_taking_executed and stop_loss_executed:
                 # If two horizontal barriers are touched at the same time on a 1m candle, consider label to be 0.
                 event.label = 0
                 store.triple_barrier_events.no_sign_count += 1
                 event.note["comment"] = f"hit both. {current_temp_candle}"
                 event.executed_at = candle_timestamp
-            elif profit_take_executed:
+            elif profit_taking_executed:
                 event.label = 1
-                store.triple_barrier_events.profit_take_count += 1
+                store.triple_barrier_events.profit_taking_count += 1
                 event.executed_at = candle_timestamp
             elif stop_loss_executed:
                 event.label = -1
