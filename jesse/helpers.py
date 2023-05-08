@@ -11,6 +11,9 @@ import arrow
 import click
 import numpy as np
 
+from jesse.enums import round_types
+
+
 CACHED_CONFIG = dict()
 
 
@@ -225,6 +228,11 @@ def make_directory(path: str) -> None:
 def floor_with_precision(num: float, precision: int = 0) -> float:
     temp = 10 ** precision
     return math.floor(num * temp) / temp
+
+
+def ceil_with_precision(num: float, precision: int = 0) -> float:
+    temp = 10 ** precision
+    return math.ceil(num * temp) / temp
 
 
 def format_currency(num: float) -> str:
@@ -1000,3 +1008,24 @@ def get_candle_start_timestamp_based_on_timeframe(timeframe: str, num_candles_to
     one_min_count = timeframe_to_one_minutes(timeframe)
     finish_date = now(force_fresh=True)
     return finish_date - (num_candles_to_fetch * one_min_count * 60_000)
+
+
+def convert_to_period_in_new_timeframe(
+    from_timeframe: str, count: int, to_timeframe: str, round_type: Optional[round_types] = None
+) -> Union[int, float]:
+    """
+    Convert from_timeframe * count to period in to_timeframe.
+    ex) 4h * 1 -> 30m * 8; return 8
+    """
+    n_minute: int = timeframe_to_one_minutes(from_timeframe)
+    total_minute: int = n_minute * count
+    to_timeframe_in_minute: int = timeframe_to_one_minutes(to_timeframe)
+    period_in_to_timeframe: int = total_minute / to_timeframe_in_minute
+    if round_type == round_types.ROUND:
+        return int(round(period_in_to_timeframe, 0))
+    elif round_type == round_types.FLOOR:
+        return int(floor_with_precision(period_in_to_timeframe, 0))
+    elif round_type == round_types.CEIL:
+        return int(ceil_with_precision(period_in_to_timeframe, 0))
+    else:
+        return period_in_to_timeframe
